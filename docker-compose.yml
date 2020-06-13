@@ -1,0 +1,27 @@
+
+version: '2'
+services:
+  db:
+    build: db/
+    container_name: db
+    expose:
+      - "3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root #rootパスワードの設定
+      - MYSQL_DATABASE=test
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    volumes:
+      - ./db/mysql_data:/var/lib/mysql
+    ports: 
+      - "3306:3306"
+  app:
+    build: app/
+    container_name: app
+    volumes:
+      - ./app/:/go/src/app
+    command: go run main.go
+    ports:
+      - "1323:1323"
+    depends_on:
+      - "db"
