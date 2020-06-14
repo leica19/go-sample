@@ -1,12 +1,12 @@
 package main
 
 import (
+	"app/db"
+	"app/models"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"net/http"
 	"strconv"
-  "app/db"
-  "app/models"
 )
 
 func main() {
@@ -40,18 +40,18 @@ func main() {
 	})
 	e.DELETE("/tenants/:tenantId/users", func(c echo.Context) (err error) {
 		tenantId, _ := strconv.Atoi(c.Param("tenantId"))
-    db := db.GetConnection()
-    var skillIds []string
-    // get skill.id to delete relation table 
-    db.Model(&models.User{}).Where("tenant_id = ?", tenantId).Pluck("skill_id", &skillIds)
-    db.Where("tenant_id = ?", tenantId).Delete(models.User{})
-    // delete relation table
-    db.Where("id IN (?)", skillIds).Delete(models.Skill{})
+		db := db.GetConnection()
+		var skillIds []string
+		// get skill.id to delete relation table
+		db.Model(&models.User{}).Where("tenant_id = ?", tenantId).Pluck("skill_id", &skillIds)
+		db.Where("tenant_id = ?", tenantId).Delete(models.User{})
+		// delete relation table
+		db.Where("id IN (?)", skillIds).Delete(models.Skill{})
 		defer db.Close()
 		return c.JSON(http.StatusOK, nil)
-  })
-  e.GET("/users", func(c echo.Context) (err error) {
-    users := []models.User{}
+	})
+	e.GET("/users", func(c echo.Context) (err error) {
+		users := []models.User{}
 		db := db.GetConnection()
 		db.Preload("Skill").Find(&users)
 		defer db.Close()
@@ -67,13 +67,13 @@ func main() {
 	})
 	e.DELETE("/users/:userId", func(c echo.Context) (err error) {
 		userId, _ := strconv.Atoi(c.Param("userId"))
-    db := db.GetConnection()
-    var skillId string
-    // get skill.id to delete relation table 
-    db.Table("users").Select("skill_id").Where("id = ?", userId).Row().Scan(&skillId)
-    db.Where("id = ?", userId).Delete(models.User{})
-    // delete relation table
-    db.Where("id = ?", skillId).Delete(models.Skill{})
+		db := db.GetConnection()
+		var skillId string
+		// get skill.id to delete relation table
+		db.Table("users").Select("skill_id").Where("id = ?", userId).Row().Scan(&skillId)
+		db.Where("id = ?", userId).Delete(models.User{})
+		// delete relation table
+		db.Where("id = ?", skillId).Delete(models.Skill{})
 		defer db.Close()
 		return c.JSON(http.StatusOK, nil)
 	})
