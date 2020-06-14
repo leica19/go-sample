@@ -52,5 +52,16 @@ func main() {
 			Rust:   true,
 		},
 	})
+	db.Create(&models.User{
+		TenantId: 3,
+		Name:     "Noriko",
+		Age:      22,
+		Sex:      "man",
+		Skill: models.Skill{
+			Golang: true,
+			Docker: true,
+			Rust:   true,
+		},
+	})
 	defer db.Close()
 }
