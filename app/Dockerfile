@@ -1,6 +1,7 @@
 FROM golang:alpine
 
 RUN apk add build-base vim git
+RUN go get github.com/pilu/fresh
 
 ADD . /go/src/app
 
