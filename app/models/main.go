@@ -23,7 +23,9 @@ type User struct {
 
 type Skill struct {
 	Model
-	Golang bool `json:"golang"`
-	Docker bool `json:"docker"`
-	Rust   bool `json:"rust"`
+	Golang     *bool `json:"golang"`
+	Docker     *bool `json:"docker"`
+	Rust       *bool `json:"rust"`
+	PHP        *bool `json:"php"`
+	JavaScript *bool `json:"javascript" gorm:"column:javascript"`
 }

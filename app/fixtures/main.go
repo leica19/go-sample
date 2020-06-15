@@ -7,16 +7,18 @@ import (
 
 func main() {
 	db := db.GetConnection()
-	db.AutoMigrate(&models.User{}, &models.Skill{})
+	pTrue := &[]bool{true}[0]
+	pFalse := &[]bool{false}[0]
 	db.Create(&models.User{
 		TenantId: 1,
 		Name:     "Taro",
 		Age:      10,
 		Sex:      "man",
 		Skill: models.Skill{
-			Golang: true,
-			Docker: true,
-			Rust:   false,
+			Golang: pTrue,
+			Docker: pTrue,
+			Rust:   pFalse,
+			PHP:    pTrue,
 		},
 	})
 	db.Create(&models.User{
@@ -25,9 +27,10 @@ func main() {
 		Age:      11,
 		Sex:      "man",
 		Skill: models.Skill{
-			Golang: true,
-			Docker: true,
-			Rust:   true,
+			Golang: pTrue,
+			Docker: pTrue,
+			Rust:   pTrue,
+			PHP:    pFalse,
 		},
 	})
 	db.Create(&models.User{
@@ -36,9 +39,9 @@ func main() {
 		Age:      12,
 		Sex:      "female",
 		Skill: models.Skill{
-			Golang: false,
-			Docker: false,
-			Rust:   false,
+			Golang: pFalse,
+			Docker: pTrue,
+			Rust:   pFalse,
 		},
 	})
 	db.Create(&models.User{
@@ -47,9 +50,9 @@ func main() {
 		Age:      10,
 		Sex:      "female",
 		Skill: models.Skill{
-			Golang: true,
-			Docker: true,
-			Rust:   true,
+			Golang: pTrue,
+			Docker: pTrue,
+			Rust:   pFalse,
 		},
 	})
 	db.Create(&models.User{
@@ -58,9 +61,9 @@ func main() {
 		Age:      22,
 		Sex:      "man",
 		Skill: models.Skill{
-			Golang: true,
-			Docker: true,
-			Rust:   true,
+			Golang: pFalse,
+			Docker: pTrue,
+			Rust:   pTrue,
 		},
 	})
 	defer db.Close()

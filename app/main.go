@@ -28,7 +28,13 @@ func main() {
 		db := db.GetConnection()
 		db.Create(&user)
 		defer db.Close()
-		return c.JSON(http.StatusOK, user)
+		return c.JSON(
+			http.StatusCreated,
+			map[string]interface{}{
+				"message": "record created",
+				"user_id": user.ID,
+			},
+		)
 	})
 	e.GET("/tenants/:tenantId/users", func(c echo.Context) (err error) {
 		tenantId, _ := strconv.Atoi(c.Param("tenantId"))
@@ -44,11 +50,19 @@ func main() {
 		var skillIds []string
 		// get skill.id to delete relation table
 		db.Model(&models.User{}).Where("tenant_id = ?", tenantId).Pluck("skill_id", &skillIds)
+		var userIds []string
+		db.Model(&models.User{}).Where("tenant_id = ?", tenantId).Pluck("id", &userIds)
 		db.Where("tenant_id = ?", tenantId).Delete(models.User{})
 		// delete relation table
 		db.Where("id IN (?)", skillIds).Delete(models.Skill{})
 		defer db.Close()
-		return c.JSON(http.StatusOK, nil)
+		return c.JSON(
+			http.StatusNotFound,
+			map[string]interface{}{
+				"message":  "record deleted",
+				"user_ids": userIds,
+			},
+		)
 	})
 	e.GET("/users", func(c echo.Context) (err error) {
 		users := []models.User{}
@@ -75,7 +89,13 @@ func main() {
 		// delete relation table
 		db.Where("id = ?", skillId).Delete(models.Skill{})
 		defer db.Close()
-		return c.JSON(http.StatusOK, nil)
+		return c.JSON(
+			http.StatusNotFound,
+			map[string]interface{}{
+				"message": "record deleted",
+				"user_id": userId,
+			},
+		)
 	})
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
