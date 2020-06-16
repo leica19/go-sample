@@ -48,7 +48,7 @@ func main() {
 		tenantId, _ := strconv.Atoi(c.Param("tenantId"))
 		db := db.GetConnection()
 		var skillIds []string
-		// get skill.id to delete relation table
+		// get skill.ids to delete relation table
 		db.Model(&models.User{}).Where("tenant_id = ?", tenantId).Pluck("skill_id", &skillIds)
 		var userIds []string
 		db.Model(&models.User{}).Where("tenant_id = ?", tenantId).Pluck("id", &userIds)
